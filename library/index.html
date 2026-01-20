@@ -23,6 +23,11 @@
       --accent: #8D6E63;
       --accent-hover: #A1887F;
     }
+    
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
@@ -42,7 +47,6 @@
       justify-content: center;
       min-height: 100vh;
       padding: 20px;
-      box-sizing: border-box;
       animation: fadeIn 0.8s ease-out;
     }
     
@@ -116,6 +120,12 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(109, 76, 65, 0.4);
     }
+    .cta-button:disabled {
+      background-color: #9e9e9e;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
     .cta-button.secondary {
       background-color: transparent;
       border: 2px solid var(--accent);
@@ -171,7 +181,6 @@
       z-index: 2000;
       overflow-y: auto;
       padding: 20px;
-      box-sizing: border-box;
       animation: slideUp 0.5s ease-out;
     }
     
@@ -203,13 +212,16 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       font-size: 1rem;
       font-family: inherit;
-      box-sizing: border-box;
+      color: #333; /* Ensuring dark text in light mode */
     }
-    body.dark-mode .search-bar input { background: #1E1E1E; color: #fff; }
+    body.dark-mode .search-bar input { 
+      background: #1E1E1E; 
+      color: #fff; 
+    }
 
     .filters-container {
       max-width: 1000px;
-      margin: 0 auto 30px;
+      margin: 0 auto 15px;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -219,6 +231,14 @@
       border-radius: 15px;
     }
     body.dark-mode .filters-container { background: rgba(255,255,255,0.05); }
+
+    .total-count {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
 
     .filter-select {
       padding: 10px 15px;
@@ -233,45 +253,139 @@
 
     .book-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 25px;
       max-width: 1200px;
-      margin: 0 auto 50px;
+      margin: 0 auto 30px;
     }
 
     .book-card {
       background: #fff;
-      padding: 25px;
+      padding: 20px;
       border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: space-between; /* Fix overlap by distributing space */
       transition: transform 0.3s;
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(0,0,0,0.03);
+      cursor: pointer;
+      height: 100%;
     }
     body.dark-mode .book-card { background: #1E1E1E; border-color: #333; }
-    .book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-color: var(--accent); }
 
     .book-icon {
-      font-size: 2.5rem; margin-bottom: 15px; color: var(--accent); opacity: 0.8;
+      font-size: 3rem; margin-bottom: 15px; color: var(--accent); opacity: 0.9;
     }
-    .book-title { font-weight: 700; font-size: 1.25rem; margin-bottom: 5px; color: var(--text); line-height: 1.3; }
-    .book-meta { font-size: 0.9rem; color: #777; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-    .book-desc {
-      font-size: 0.95rem; line-height: 1.6; color: var(--text); opacity: 0.8;
-      flex-grow: 1; max-height: 120px; overflow-y: auto; margin-bottom: 15px;
-      padding-right: 5px;
+    .book-content {
+      width: 100%;
+      margin-bottom: 15px;
     }
-    .book-desc::-webkit-scrollbar { width: 4px; }
-    .book-desc::-webkit-scrollbar-thumb { background-color: var(--accent); border-radius: 2px; }
-
-    .badge {
-      display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; background: #eee; color: #555;
+    .book-title { 
+      font-weight: 700; 
+      font-size: 1.1rem; 
+      margin-bottom: 5px; 
+      color: var(--text); 
+      line-height: 1.3;
+      word-wrap: break-word; /* Prevent text overflow */
+    }
+    .book-author { 
+      font-size: 0.9rem; 
+      color: #777; 
+      margin-bottom: 10px;
+      word-wrap: break-word;
     }
     
-    audio { width: 100%; height: 32px; margin-top: auto; border-radius: 20px; }
+    .badge {
+      display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; background: #eee; color: #555; margin-top: auto;
+    }
+
+    /* --- MODAL STYLES --- */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 3000; 
+      left: 0; top: 0; 
+      width: 100%; height: 100%; 
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.6); 
+      align-items: center; 
+      justify-content: center;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s;
+    }
+    .modal-content {
+      background-color: var(--card-bg);
+      margin: auto;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%; 
+      max-width: 550px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+      position: relative;
+      animation: slideUp 0.3s;
+      color: var(--text);
+    }
+    .close-modal {
+      position: absolute;
+      right: 25px;
+      top: 20px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+    .close-modal:hover { color: var(--accent); }
+    
+    /* Detail View specific */
+    .detail-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .detail-icon { font-size: 4rem; color: var(--accent); margin-bottom: 15px; }
+    .detail-title { font-size: 1.8rem; font-family: 'Playfair Display', serif; margin-bottom: 5px; line-height: 1.2; word-wrap: break-word; }
+    .detail-author { font-size: 1.1rem; opacity: 0.8; }
+    .detail-body { margin-bottom: 25px; line-height: 1.6; }
+    .detail-meta { 
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; justify-content: center;
+    }
+    
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.8);
+      font-family: inherit;
+      box-sizing: border-box;
+      color: #333; /* Dark text for inputs */
+    }
+    body.dark-mode .form-group input, body.dark-mode .form-group select {
+      background: #2C2C2C; border-color: #444; color: #fff;
+    }
+    .form-group input:focus, .form-group select:focus {
+        outline: none; border-color: var(--accent);
+    }
+    
+    .book-summary {
+      display: flex; gap: 15px; align-items: center; margin-bottom: 25px;
+      background: rgba(0,0,0,0.03); padding: 15px; border-radius: 15px;
+    }
+    body.dark-mode .book-summary { background: rgba(255,255,255,0.05); }
+    .summary-icon { font-size: 2rem; color: var(--accent); }
+
+    audio { width: 100%; height: 40px; margin-top: 15px; border-radius: 20px; }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -282,6 +396,7 @@
       .dashboard-header { flex-direction: column; text-align: center; gap: 15px; }
       .filters-container { flex-direction: column; }
       .filter-select { width: 100%; }
+      .detail-title { font-size: 1.5rem; }
     }
   </style>
   <script type="importmap">
@@ -292,6 +407,7 @@
     }
   }
   </script>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body>
   <div id="portal-view">
@@ -340,11 +456,11 @@
     </div>
 
     <div class="search-bar">
-      <input type="text" id="guest-search" placeholder="Kërko sipas titullit ose autorit..." oninput="filterGuestBooks()">
+      <input type="text" id="guest-search" placeholder="Kërko sipas titullit ose autorit..." oninput="resetAndFilter()">
     </div>
 
     <div class="filters-container">
-      <select id="filter-class" class="filter-select" onchange="filterGuestBooks()">
+      <select id="filter-class" class="filter-select" onchange="resetAndFilter()">
         <option value="all">Të gjitha klasat</option>
         <option value="1">Klasa 1</option>
         <option value="2">Klasa 2</option>
@@ -357,7 +473,7 @@
         <option value="9">Klasa 9</option>
       </select>
       
-      <select id="filter-genre" class="filter-select" onchange="filterGuestBooks()">
+      <select id="filter-genre" class="filter-select" onchange="resetAndFilter()">
         <option value="all">Të gjitha zhanret</option>
         <option value="Roman">Roman</option>
         <option value="Poezi">Poezi</option>
@@ -366,11 +482,13 @@
         <option value="Tjetër">Tjetër</option>
       </select>
 
-      <select id="filter-status" class="filter-select" onchange="filterGuestBooks()">
+      <select id="filter-status" class="filter-select" onchange="resetAndFilter()">
         <option value="all">Të gjitha statuset</option>
         <option value="available">Të Disponueshëm</option>
       </select>
     </div>
+
+    <div id="total-count" class="total-count"></div>
 
     <div id="guest-book-list" class="book-grid">
       <p style="grid-column: 1/-1; text-align: center; font-size: 1.2rem; margin-top: 50px; opacity: 0.6;">
@@ -379,9 +497,72 @@
     </div>
   </div>
 
+  <!-- Book Detail Modal -->
+  <div id="book-detail-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeBookDetail()">&times;</span>
+      
+      <div id="detail-content">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Borrow Modal -->
+  <div id="borrow-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeBorrowModal()">&times;</span>
+      <h2 style="margin-top:0; margin-bottom:20px; font-size:1.8rem;">Kërkesë për Tërheqje</h2>
+      
+      <div class="book-summary">
+        <div class="summary-icon"><i class="fas fa-book"></i></div>
+        <div>
+          <div id="modal-book-title" style="font-weight:bold; font-size:1.1rem;"></div>
+          <div id="modal-book-author" style="font-size:0.9rem; opacity:0.8;"></div>
+        </div>
+      </div>
+
+      <form id="borrow-form" onsubmit="submitBorrowRequest(event)">
+        <input type="hidden" id="borrow-book-id">
+        <input type="hidden" id="borrow-book-title-hidden">
+        
+        <div class="form-group">
+          <label>Emri dhe Mbiemri</label>
+          <input type="text" id="borrow-name" required placeholder="Shkruani emrin tuaj të plotë">
+        </div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="borrow-email" required placeholder="email@shembull.com">
+        </div>
+        
+        <div class="form-group">
+          <label>Klasa</label>
+          <select id="borrow-class" required>
+            <option value="">Zgjidhni klasën</option>
+            <option value="1">Klasa 1</option>
+            <option value="2">Klasa 2</option>
+            <option value="3">Klasa 3</option>
+            <option value="4">Klasa 4</option>
+            <option value="5">Klasa 5</option>
+            <option value="6">Klasa 6</option>
+            <option value="7">Klasa 7</option>
+            <option value="8">Klasa 8</option>
+            <option value="9">Klasa 9</option>
+            <option value="Staf">Staf Pedagogjik</option>
+          </select>
+        </div>
+
+        <button type="submit" class="cta-button" style="width:100%;">
+          <i class="fas fa-paper-plane"></i> Dërgo Kërkesën
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "firebase/app";
-    import { getDatabase, ref, onValue } from "firebase/database";
+    import { getDatabase, ref, onValue, push } from "firebase/database";
 
     // Initialize Theme
     const savedTheme = localStorage.getItem('theme');
@@ -413,6 +594,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     let allBooks = [];
+    let filteredBooks = [];
 
     // --- Helper Functions ---
     function convertDriveLink(link) {
@@ -445,16 +627,155 @@
       document.getElementById('portal-view').style.display = 'block'; // Portal wrapper handles centering
     };
 
+    // --- Detail Modal Logic ---
+    window.openBookDetail = (bookId) => {
+      const book = allBooks.find(b => b.id === bookId);
+      if(!book) return;
+
+      const qty = book.quantity || 0;
+      let statusHtml = '';
+      let actionBtn = '';
+
+      if (qty > 0) {
+        statusHtml = `<span class="badge" style="background:#e8f5e9; color:#2e7d32; font-size:0.9rem;">E Disponueshme (${qty})</span>`;
+        actionBtn = `
+          <button onclick="openBorrowModal('${book.id}')" class="cta-button" style="width:100%; margin-top:20px;">
+            <i class="fas fa-hand-holding-heart"></i> Tërhiq Librin
+          </button>
+        `;
+      } else {
+        statusHtml = `<span class="badge" style="background:#ffebee; color:#c62828; font-size:0.9rem;">E Zënë (0)</span>`;
+        actionBtn = `
+          <button disabled class="cta-button secondary" style="width:100%; margin-top:20px; opacity:0.5; cursor:not-allowed;">
+            <i class="fas fa-clock"></i> I Zënë momentalisht
+          </button>
+        `;
+      }
+
+      let audioHtml = '';
+      if(book.audioUrl) {
+        const stream = convertDriveLink(book.audioUrl);
+        audioHtml = `<audio controls src="${stream}" preload="none" style="width:100%;">Audio jo e suportuar.</audio>`;
+      }
+
+      const html = `
+        <div class="detail-header">
+          <div class="detail-icon"><i class="fas fa-book"></i></div>
+          <div class="detail-title">${escapeHtml(book.title)}</div>
+          <div class="detail-author">nga ${escapeHtml(book.author)}</div>
+        </div>
+        
+        <div class="detail-meta">
+           ${statusHtml}
+           <span class="badge" style="background:#e3f2fd; color:#1565c0; font-size:0.9rem;">${escapeHtml(book.genre)}</span>
+           <span class="badge" style="background:#f3e5f5; color:#7b1fa2; font-size:0.9rem;">Rekomanduar: Kl. ${book.recommended || 'Të gjitha'}</span>
+        </div>
+
+        <div class="detail-body">
+          <strong>Përshkrimi:</strong><br>
+          <div style="margin-top:5px; opacity:0.9;">
+            ${escapeHtml(book.description || 'Nuk ka përshkrim për këtë libër.')}
+          </div>
+          ${audioHtml}
+        </div>
+
+        ${actionBtn}
+      `;
+
+      document.getElementById('detail-content').innerHTML = html;
+      document.getElementById('book-detail-modal').style.display = 'flex';
+    };
+
+    window.closeBookDetail = () => {
+      document.getElementById('book-detail-modal').style.display = 'none';
+    };
+
+    // --- Borrow Modal Logic ---
+    window.openBorrowModal = (bookId) => {
+      // Close detail modal if open to prevent stacking issues (optional, or keep generic)
+      closeBookDetail(); 
+      
+      const book = allBooks.find(b => b.id === bookId);
+      if(!book) return;
+      
+      document.getElementById('modal-book-title').textContent = book.title;
+      document.getElementById('modal-book-author').textContent = book.author;
+      document.getElementById('borrow-book-id').value = bookId;
+      document.getElementById('borrow-book-title-hidden').value = book.title;
+      
+      document.getElementById('borrow-modal').style.display = 'flex';
+    };
+
+    window.closeBorrowModal = () => {
+      document.getElementById('borrow-modal').style.display = 'none';
+      document.getElementById('borrow-form').reset();
+    };
+
+    window.onclick = (event) => {
+      const modal1 = document.getElementById('borrow-modal');
+      const modal2 = document.getElementById('book-detail-modal');
+      if (event.target == modal1) closeBorrowModal();
+      if (event.target == modal2) closeBookDetail();
+    };
+
+    window.submitBorrowRequest = (e) => {
+      e.preventDefault();
+      
+      const bookId = document.getElementById('borrow-book-id').value;
+      const bookTitle = document.getElementById('borrow-book-title-hidden').value;
+      const name = document.getElementById('borrow-name').value;
+      const email = document.getElementById('borrow-email').value;
+      const studentClass = document.getElementById('borrow-class').value;
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Duke dërguar...';
+      submitBtn.disabled = true;
+
+      const requestData = {
+        bookId: bookId,
+        bookTitle: bookTitle,
+        userName: name,
+        userEmail: email,
+        userClass: studentClass,
+        requestDate: new Date().toISOString(),
+        status: 'pending'
+      };
+
+      // Save to both 'borrow_requests' and 'kerkesat' as requested
+      const p1 = push(ref(db, 'borrow_requests'), requestData);
+      const p2 = push(ref(db, 'kerkesat'), requestData);
+
+      Promise.all([p1, p2])
+      .then(() => {
+        alert(`Kërkesa për librin "${bookTitle}" u dërgua me sukses!\nJu lutem paraqituni në bibliotekë për tërheqje.`);
+        closeBorrowModal();
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+        alert("Ndodhi një gabim gjatë dërgimit të kërkesës. Ju lutem provoni përsëri.");
+      })
+      .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      });
+    };
+
     function fetchBooks() {
       onValue(ref(db, 'books'), (snap) => {
         if (snap.exists()) {
           const data = snap.val();
           allBooks = Object.entries(data).map(([key, val]) => ({ ...val, id: key }));
-          filterGuestBooks();
+          resetAndFilter();
         } else {
           document.getElementById('guest-book-list').innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Ende nuk ka libra në sistem.</p>';
+          document.getElementById('total-count').textContent = '';
         }
       });
+    }
+
+    window.resetAndFilter = () => {
+      filterGuestBooks();
     }
 
     window.filterGuestBooks = () => {
@@ -463,7 +784,7 @@
       const genreFilter = document.getElementById('filter-genre').value;
       const statusFilter = document.getElementById('filter-status').value;
       
-      const filtered = allBooks.filter(b => {
+      filteredBooks = allBooks.filter(b => {
         const matchSearch = (b.title || "").toLowerCase().includes(search) || (b.author || "").toLowerCase().includes(search);
         const matchClass = classFilter === 'all' || String(b.recommended) === String(classFilter);
         const matchGenre = genreFilter === 'all' || b.genre === genreFilter;
@@ -474,25 +795,25 @@
         return matchSearch && matchClass && matchGenre && matchStatus;
       });
 
-      renderGrid(filtered);
+      renderGrid();
     };
 
-    function renderGrid(books) {
+    function renderGrid() {
       const list = document.getElementById('guest-book-list');
-      list.innerHTML = '';
+      const totalCountEl = document.getElementById('total-count');
       
-      if(books.length === 0) {
+      list.innerHTML = '';
+
+      // Update Total Count
+      totalCountEl.textContent = `Gjithsej: ${filteredBooks.length} libra`;
+      
+      if(filteredBooks.length === 0) {
         list.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 20px; font-size:1.1rem;">Nuk u gjet asnjë libër me këto kritere.</p>';
         return;
       }
 
-      books.forEach(book => {
-        let audioHtml = '';
-        if(book.audioUrl) {
-          const stream = convertDriveLink(book.audioUrl);
-          audioHtml = `<audio controls src="${stream}" preload="none">Audio jo e suportuar.</audio>`;
-        }
-
+      // Render All Books (No Pagination)
+      filteredBooks.forEach(book => {
         const qty = book.quantity || 0;
         const statusBadge = qty > 0 
           ? `<span class="badge" style="background:#e8f5e9; color:#2e7d32;">E Disponueshme (${qty})</span>` 
@@ -500,24 +821,20 @@
 
         const div = document.createElement('div');
         div.className = 'book-card';
+        div.onclick = () => openBookDetail(book.id);
+        
         div.innerHTML = `
           <div class="book-icon"><i class="fas fa-book"></i></div>
-          <div class="book-title">${escapeHtml(book.title)}</div>
-          <div class="book-meta">
-             <span><i class="fas fa-user-pen"></i> ${escapeHtml(book.author)}</span>
-             <span>|</span>
-             <span>${escapeHtml(book.genre)}</span>
+          <div class="book-content">
+            <div class="book-title">${escapeHtml(book.title)}</div>
+            <div class="book-author">${escapeHtml(book.author)}</div>
           </div>
-          <div style="margin-bottom:10px;">
-             ${statusBadge}
-             <span class="badge" style="background:#e3f2fd; color:#1565c0;">Kl. ${book.recommended || 'Të gjitha'}</span>
-          </div>
-          <div class="book-desc" title="Përshkrimi">${escapeHtml(book.description || 'Pa përshkrim')}</div>
-          ${audioHtml}
+          ${statusBadge}
         `;
         list.appendChild(div);
       });
     }
   </script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
